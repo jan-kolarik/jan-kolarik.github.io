@@ -1,0 +1,46 @@
+baseURL = 'https://jan-kolarik.github.io/'
+languageCode = 'en-us'
+title = "kolage"
+theme = 'PaperMod'
+enableEmoji = true
+
+[[menu.main]]
+name = 'Archive'
+url = 'archives'
+weight = 10
+[[menu.main]]
+name = 'Tags'
+url = 'tags'
+weight = 20
+[[menu.main]]
+name = 'Search'
+url = 'search'
+weight = 30
+[[menu.main]]
+name = 'About'
+url = 'about'
+weight = 40
+
+[params]
+env = 'production'
+ShowShareButtons = true
+ShowFullTextinRSS = true
+[params.homeInfoParams]
+Title = 'Greetings, adventurer! 🙌'
+Content = """
+Be welcome to my blog.
+- I'd like to share with you some thoughts and observations related to Linux 
+and open-source software development I hope you might find helpful.
+"""
+[[params.socialIcons]]
+name = "github"
+url = "https://github.com/jan-kolarik"
+[[params.socialIcons]]
+name = "linkedin"
+url = "https://www.linkedin.com/in/jan-kolarik/"
+[[params.socialIcons]]
+name = "Rss"
+url = "index.xml"
+
+[outputs]
+home = [ "HTML", "RSS", "JSON" ]
