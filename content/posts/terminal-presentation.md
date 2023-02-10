@@ -32,7 +32,7 @@ Following technologies are used to create the resulting presentation:
 
 ### Prepare the example
 
-Let's say you want to present and describe an example of your source code and
+Let's say we want to present and describe an example of our source code and
 then show the audience how it is being run on the target system using the CLI.
 
 Here we'll use this simple Python snippet:
@@ -51,7 +51,7 @@ print(f'Your lucky number is {number}.')
 
 ### Insert it inside the presentation
 
-Suppose you have already configured and running some instance of the reveal.js 
+Suppose we have already configured and running some instance of the reveal.js 
 presentation, we can insert a section with our code example there:
 
 ```html
@@ -113,15 +113,15 @@ The result could look like this:
 
 ### Setup the web terminal
 
-Deploying the shell web server is very simple. When you have downloaded 
-the ttyd binary, you just provide the port number where the daemon will be listening and
+Deploying the shell web server is very simple. When we have downloaded 
+the ttyd binary, we just provide the port number where the daemon will be listening and
 providing the HTTP layer above the console.
 
 Following example will deploy ttyd web server on the port `1234` and for
 every connected client it will create a new process with `bash`:
 
 ```bash
-./ttyd -p 1234 bash
+ttyd -p 1234 bash
 ```
 
 ---
@@ -146,7 +146,7 @@ We can setup a custom font size and also change the colors for ttyd
 console like this:
 
 ```bash
-./ttyd -p 1234 -t fontSize=12 -t 'theme={"background": "white", "foreground": "black"}' bash
+ttyd -p 1234 -t fontSize=12 -t 'theme={"background": "white", "foreground": "black"}' bash
 ```
 
 In reveal.js we will stack the console frame window on the top of the code snippet
@@ -157,7 +157,7 @@ class to the console `iframe`.
 
 In the end we can change the console frame size to match the code snippet.
 
-One hack that could be handy **when you don't want to show the vertical scrollbar**
+One hack that could be handy **when we don't want to show the vertical scrollbar**
 inside the console frame, but still keeping the scrolling functionality. In this case
 we can wrap the console in the `div` which will match the size of the code example frame, 
 but we stretch the width of the actual `iframe` a bit, so the scrollbar is hidden. This
@@ -239,7 +239,7 @@ podman pull fedora
 podman run -it fedora
 ```
 
-It will redirect you inside the container terminal:
+It will redirect us inside the container terminal:
 
 ```bash
 [root@fdee00b17d43 /]# 
@@ -265,7 +265,7 @@ Finally we will prepare the ttyd daemon to spawn a new container for us
 on each attach:
 
 ```bash
-./ttyd -p 1234 podman run -it example-container /bin/bash
+ttyd -p 1234 podman run -it example-container /bin/bash
 ```
 
 We can also change the container's hostname with `-h my-hostname`, so
