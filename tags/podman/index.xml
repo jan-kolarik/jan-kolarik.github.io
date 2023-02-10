@@ -15,7 +15,7 @@ your host system.</p>
 <hr>
 <h2 id="show-the-code-first">Show the code first</h2>
 <h3 id="prepare-the-example">Prepare the example</h3>
-<p>Let&rsquo;s say you want to present and describe an example of your source code and
+<p>Let&rsquo;s say we want to present and describe an example of our source code and
 then show the audience how it is being run on the target system using the CLI.</p>
 <p>Here we&rsquo;ll use this simple Python snippet:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> random
@@ -27,7 +27,7 @@ then show the audience how it is being run on the target system using the CLI.</
 </span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Your lucky number is </span><span style="color:#e6db74">{</span>number<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#39;</span>)
 </span></span></code></pre></div><hr>
 <h3 id="insert-it-inside-the-presentation">Insert it inside the presentation</h3>
-<p>Suppose you have already configured and running some instance of the reveal.js
+<p>Suppose we have already configured and running some instance of the reveal.js
 presentation, we can insert a section with our code example there:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">section</span>&gt;
 </span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">h4</span>&gt;Python demo&lt;/<span style="color:#f92672">h4</span>&gt;
@@ -73,12 +73,12 @@ line number 1, then lines 3-4 and ending with lines 6-7.</p>
 </span></span></code></pre></div><hr>
 <h2 id="add-an-interactive-console">Add an interactive console</h2>
 <h3 id="setup-the-web-terminal">Setup the web terminal</h3>
-<p>Deploying the shell web server is very simple. When you have downloaded
-the ttyd binary, you just provide the port number where the daemon will be listening and
+<p>Deploying the shell web server is very simple. When we have downloaded
+the ttyd binary, we just provide the port number where the daemon will be listening and
 providing the HTTP layer above the console.</p>
 <p>Following example will deploy ttyd web server on the port <code>1234</code> and for
 every connected client it will create a new process with <code>bash</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./ttyd -p <span style="color:#ae81ff">1234</span> bash
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ttyd -p <span style="color:#ae81ff">1234</span> bash
 </span></span></code></pre></div><hr>
 <h3 id="integrate-the-console">Integrate the console</h3>
 <p>Putting the console into the presentation is as simple as adding new <code>iframe</code>
@@ -90,14 +90,14 @@ pointing to our ttyd service at <code>http://localhost:1234/</code>:</p>
 console window we need to add a bit more configuration.</p>
 <p>We can setup a custom font size and also change the colors for ttyd
 console like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./ttyd -p <span style="color:#ae81ff">1234</span> -t fontSize<span style="color:#f92672">=</span><span style="color:#ae81ff">12</span> -t <span style="color:#e6db74">&#39;theme={&#34;background&#34;: &#34;white&#34;, &#34;foreground&#34;: &#34;black&#34;}&#39;</span> bash
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ttyd -p <span style="color:#ae81ff">1234</span> -t fontSize<span style="color:#f92672">=</span><span style="color:#ae81ff">12</span> -t <span style="color:#e6db74">&#39;theme={&#34;background&#34;: &#34;white&#34;, &#34;foreground&#34;: &#34;black&#34;}&#39;</span> bash
 </span></span></code></pre></div><p>In reveal.js we will stack the console frame window on the top of the code snippet
 while keeping it invisible until the snippet code slides are fully traversed.
 This could be done by including the both frames inside the parent <code>div</code> having the
 <code>r-stack</code> class and showing the console at the right moment by adding the <code>fragment</code>
 class to the console <code>iframe</code>.</p>
 <p>In the end we can change the console frame size to match the code snippet.</p>
-<p>One hack that could be handy <strong>when you don&rsquo;t want to show the vertical scrollbar</strong>
+<p>One hack that could be handy <strong>when we don&rsquo;t want to show the vertical scrollbar</strong>
 inside the console frame, but still keeping the scrolling functionality. In this case
 we can wrap the console in the <code>div</code> which will match the size of the code example frame,
 but we stretch the width of the actual <code>iframe</code> a bit, so the scrollbar is hidden. This
@@ -163,7 +163,7 @@ console.</p>
 latest Fedora container image and get inside that:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>podman pull fedora
 </span></span><span style="display:flex;"><span>podman run -it fedora
-</span></span></code></pre></div><p>It will redirect you inside the container terminal:</p>
+</span></span></code></pre></div><p>It will redirect us inside the container terminal:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@fdee00b17d43 /<span style="color:#f92672">]</span><span style="color:#75715e"># </span>
 </span></span></code></pre></div><p>Now prepare the environment needed for the demo, like installing dependencies,
 copying the example scripts into the container etc.</p>
@@ -174,7 +174,7 @@ tagging it with <code>example-container</code> name by doing:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>podman image import container.tar example-container
 </span></span></code></pre></div><p>Finally we will prepare the ttyd daemon to spawn a new container for us
 on each attach:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./ttyd -p <span style="color:#ae81ff">1234</span> podman run -it example-container /bin/bash
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ttyd -p <span style="color:#ae81ff">1234</span> podman run -it example-container /bin/bash
 </span></span></code></pre></div><p>We can also change the container&rsquo;s hostname with <code>-h my-hostname</code>, so
 the shell on the live demo will not show the ugly auto-generated id.</p>
 <p>And of course we can prepare many containers running on different ports
