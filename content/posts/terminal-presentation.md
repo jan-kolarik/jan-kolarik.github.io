@@ -47,8 +47,6 @@ number = random.randint(1, 100)
 print(f'Your lucky number is {number}.')
 ```
 
----
-
 ### Insert it inside the presentation
 
 Suppose we have already configured and running some instance of the reveal.js 
@@ -70,8 +68,6 @@ presentation, we can insert a section with our code example there:
     </pre>
 </section>
 ```
-
----
 
 ### Stylize the snippet
 
@@ -124,8 +120,6 @@ every connected client it will create a new process with `bash`:
 ttyd -p 1234 bash
 ```
 
----
-
 ### Integrate the console
 
 Putting the console into the presentation is as simple as adding new `iframe`
@@ -134,8 +128,6 @@ pointing to our ttyd service at `http://localhost:1234/`:
 ```html
 <iframe src="http://localhost:1234/"></iframe>
 ```
-
----
 
 ### Tuning the visual
 
