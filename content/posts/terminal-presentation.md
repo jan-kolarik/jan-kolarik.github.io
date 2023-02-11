@@ -1,7 +1,7 @@
 ---
 title: "Creating slides with integrated shell"
 date: "2023-02-10"
-summary: "How to setup seamless interactive console within your presentation"
+summary: "How to setup a seamless interactive console within your presentation"
 tags: ["revealjs", "ttyd", "podman"]
 ShowCodeCopyButtons: true
 ShowToc: true
