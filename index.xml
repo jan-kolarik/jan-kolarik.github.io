@@ -25,8 +25,7 @@ then show the audience how it is being run on the target system using the CLI.</
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># Print the number</span>
 </span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Your lucky number is </span><span style="color:#e6db74">{</span>number<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#39;</span>)
-</span></span></code></pre></div><hr>
-<h3 id="insert-it-inside-the-presentation">Insert it inside the presentation</h3>
+</span></span></code></pre></div><h3 id="insert-it-inside-the-presentation">Insert it inside the presentation</h3>
 <p>Suppose we have already configured and running some instance of the reveal.js
 presentation, we can insert a section with our code example there:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">section</span>&gt;
@@ -43,8 +42,7 @@ presentation, we can insert a section with our code example there:</p>
 </span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">code</span>&gt;
 </span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">pre</span>&gt;
 </span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">section</span>&gt;
-</span></span></code></pre></div><hr>
-<h3 id="stylize-the-snippet">Stylize the snippet</h3>
+</span></span></code></pre></div><h3 id="stylize-the-snippet">Stylize the snippet</h3>
 <p>Now we can play a bit more with the layout. We could change the default <code>font-size</code>
 and the <code>width</code> of the code block, so our snippet doesn&rsquo;t contain any scrollbars
 and it is better centered within the presentation screen.</p>
@@ -79,13 +77,11 @@ providing the HTTP layer above the console.</p>
 <p>Following example will deploy ttyd web server on the port <code>1234</code> and for
 every connected client it will create a new process with <code>bash</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ttyd -p <span style="color:#ae81ff">1234</span> bash
-</span></span></code></pre></div><hr>
-<h3 id="integrate-the-console">Integrate the console</h3>
+</span></span></code></pre></div><h3 id="integrate-the-console">Integrate the console</h3>
 <p>Putting the console into the presentation is as simple as adding new <code>iframe</code>
 pointing to our ttyd service at <code>http://localhost:1234/</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">iframe</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://localhost:1234/&#34;</span>&gt;&lt;/<span style="color:#f92672">iframe</span>&gt;
-</span></span></code></pre></div><hr>
-<h3 id="tuning-the-visual">Tuning the visual</h3>
+</span></span></code></pre></div><h3 id="tuning-the-visual">Tuning the visual</h3>
 <p>Now to create a seamless transition between the code snippet and the
 console window we need to add a bit more configuration.</p>
 <p>We can setup a custom font size and also change the colors for ttyd
