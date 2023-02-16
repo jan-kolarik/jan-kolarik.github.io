@@ -6,6 +6,7 @@ tags: ["arduino", "vscode"]
 ShowCodeCopyButtons: true
 ShowToc: true
 ShowReadingTime: true
+ShowPostNavLinks: true
 ---
 
 <!-- Debugging AT MEGA 2560 on Linux

@@ -3,6 +3,7 @@ title: "DNF5 at FOSDEM"
 date: "2023-02-09"
 summary: "Presenting the upcoming Fedora Linux package manager in Brussels"
 tags: ["dnf"]
+ShowPostNavLinks: true
 ---
 
 ![fosdem-logo](/posts/images/fosdem-logo.png "FOSDEM logo")

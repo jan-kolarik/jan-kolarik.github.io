@@ -6,13 +6,15 @@ tags: ["revealjs", "ttyd", "podman"]
 ShowCodeCopyButtons: true
 ShowToc: true
 ShowReadingTime: true
+ShowPostNavLinks: true
 ---
 
 ## Intro
 
 If you are planning to make a presentation including some live command-line
-examples, the following article could be useful for you. I'd like 
-to share with you my setup which results in HTML presentation
+examples, the following article could be useful for you. 
+
+I'd like to share with you my setup which results in HTML presentation
 containing embedded console windows which can run isolated from
 your host system.
 
@@ -276,3 +278,11 @@ podman container rm --filter ancestor=localhost/example-container
 ```
 
 ---
+
+## References
+
+Here are links to show you an example of such a presentation. It is from 
+our DNF5 talk we had at FOSDEM last week:
+- [Sources](https://github.com/jan-kolarik/dnf5-fosdem)
+- [Slides](https://jan-kolarik.github.io/dnf5-fosdem)
+- [Recording](https://video.fosdem.org/2023/K.1.105%20%28La%20Fontaine%29/dnf5.webm)
