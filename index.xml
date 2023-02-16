@@ -158,8 +158,8 @@ upstream project of the <strong>avr_debug</strong> author.</p>
 <hr>
 ]]></content:encoded></item><item><title>Creating slides with integrated shell</title><link>https://jan-kolarik.github.io/posts/terminal-presentation/</link><pubDate>Fri, 10 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/terminal-presentation/</guid><description>How to setup a seamless interactive console within your presentation</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
 <p>If you are planning to make a presentation including some live command-line
-examples, the following article could be useful for you. I&rsquo;d like
-to share with you my setup which results in HTML presentation
+examples, the following article could be useful for you.</p>
+<p>I&rsquo;d like to share with you my setup which results in HTML presentation
 containing embedded console windows which can run isolated from
 your host system.</p>
 <hr>
@@ -339,6 +339,14 @@ Therefore it may be desirable to cleanup all the related containers
 after the presentation is done:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>podman container rm --filter ancestor<span style="color:#f92672">=</span>localhost/example-container
 </span></span></code></pre></div><hr>
+<h2 id="references">References</h2>
+<p>Here are links to show you an example of such a presentation. It is from
+our DNF5 talk we had at FOSDEM last week:</p>
+<ul>
+<li><a href="https://github.com/jan-kolarik/dnf5-fosdem">Sources</a></li>
+<li><a href="https://jan-kolarik.github.io/dnf5-fosdem">Slides</a></li>
+<li><a href="https://video.fosdem.org/2023/K.1.105%20%28La%20Fontaine%29/dnf5.webm">Recording</a></li>
+</ul>
 ]]></content:encoded></item><item><title>About</title><link>https://jan-kolarik.github.io/about/</link><pubDate>Thu, 09 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/about/</guid><description>About me</description><content:encoded><![CDATA[<p>My name is Jan Kolárik and I&rsquo;m a software engineer currently working in Red Hat.</p>
 <p>I first discovered Linux when I was 14 years old and a few years later I started using it as my main operating system.</p>
 <p>Recently, I&rsquo;ve entered the world of open source as a developer, which has been my dream for a long time.</p>
