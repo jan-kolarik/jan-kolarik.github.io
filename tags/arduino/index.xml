@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>arduino on kolage</title><link>https://jan-kolarik.github.io/tags/arduino/</link><description>Recent content in arduino on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 16 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/arduino/index.xml" rel="self" type="application/rss+xml"/><item><title>Debugging Arduino without additional hardware</title><link>https://jan-kolarik.github.io/posts/atmega-debug-linux/</link><pubDate>Thu, 16 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/atmega-debug-linux/</guid><description>Using Visual Studio Code to debug programs for Arduino Mega 2560</description><content:encoded><![CDATA[<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p><img loading="lazy" src="/posts/images/arduino-logo.png" alt="arduino-logo"  title="Arduino logo"  />
+</p>
+<h2 id="intro">Intro</h2>
+<p>On a bit different note, recently I was trying to help my father with adding
+debugging support for Arduino Mega 2560 microcontroller board without need
+to use any additional hardware kit.</p>
+<p>For Windows, there is a great <a href="https://www.codeproject.com/Articles/5150391/Creating-and-Debugging-Arduino-Programs-in-Visual">tutorial</a> for that, but we need to setup several things differently in the Linux environment
+and I didn&rsquo;t find any easy-to-use guide for that.</p>
+<p>So I want to share my approach with you, definitely nothing world-shattering, but could be useful for anyone with
+similar intention or might save you some time from being stuck in one place for too long.</p>
+<hr>
+<h2 id="environment">Environment</h2>
+<ul>
+<li>Fedora Linux (but should be applicable to any other distro)</li>
+<li><a href="https://code.visualstudio.com/">Visual Studio Code</a> + Arduino extension</li>
+<li><a href="https://github.com/arduino/arduino-cli">Arduino CLI</a></li>
+<li><a href="https://github.com/jdolinay/avr_debug">avr_debug</a></li>
+</ul>
+<hr>
+<h2 id="building-and-uploading">Building and uploading</h2>
+<p>First we need to setup the building of our project and make it possible
+to upload the binary into the board.</p>
+<h3 id="prepare-vs-code">Prepare VS Code</h3>
+<p>Install the <strong>Arduino CLI</strong> tool to provide an all-in-one solution for
+Arduino boards.</p>
+<p>Then we need to install &amp; enable the <strong>Arduino</strong> extension in the VS Code.
+In the extension&rsquo;s configuration we need to modify some fields:</p>
+<ul>
+<li>Arduino: Command Path (<code>arduino.commandPath</code>) &ndash; set <code>arduino-cli</code></li>
+<li>Arduino: Path (<code>arduino.path</code>) &ndash; set <code>/path/to/your/arduino-cli/binary</code></li>
+<li>Arduino: Use Arduino Cli (<code>arduino.useArduinoCli</code>) &ndash; set <code>true</code></li>
+</ul>
+<p>Initialize the Arduino project with the <strong>Arduino: Initialize</strong> command, f.e.
+by selecting it from the command palette using the <strong>F1</strong> key in VS Code.
+This will generate the empty <code>.ino</code> source file and the default <code>arduino.json</code>
+extension config for our project in the <code>.vscode</code> folder. You will also need to <strong>rename</strong>
+this existing <code>.ino</code> file to match the name of the project.</p>
+<p>Open the <strong>Arduino: Board Manager</strong> command and install the <strong>Arduino AVR Boards</strong>
+package to add support for our microcontroller board.</p>
+<p>Using the bottom status bar in VS Code, select the <strong>Arduino Mega</strong> board type.</p>
+<p>Now you can try to compile the empty project using the <strong>Arduino: Verify</strong>
+command which is also available under the icon in the editor&rsquo;s top bar.</p>
+<h3 id="deploy-a-simple-program">Deploy a simple program</h3>
+<p>To be able to upload our program to the actual board, it might be needed
+to add appropriate user rights by adding the current user to the
+<code>dialout</code> or <code>tty</code> group:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo usermod -a -G dialout $USER
+</span></span></code></pre></div><p>It will need a logout or restart.</p>
+<p>Connect the board to the USB and select the <code>/dev/ttyUSB0</code> port
+from the bottom status bar.</p>
+<p>We should be able now to upload the program to the board with the
+<strong>Arduino: Upload</strong> command.</p>
+<p>To see if it is really working you can add some simple blinking
+to the <code>.ino</code> source:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pinMode</span>(LED_BUILTIN, OUTPUT);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loop</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">digitalWrite</span>(LED_BUILTIN, HIGH);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">delay</span>(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">digitalWrite</span>(LED_BUILTIN, LOW);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">delay</span>(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h2 id="debugging">Debugging</h2>
+<p>Here we&rsquo;ll add support for debugging our board from the VS Code
+using just the connected USB cable.</p>
+<h3 id="setup-the-debugger">Setup the debugger</h3>
+<p>We will prepare the <strong>GDB</strong> debugger that will be running on our
+local computer and the <strong>avr_debug</strong>, remote stub which will be
+deployed to the ATMega and communicating with the <strong>GDB</strong> to
+allow debugging from VS Code.</p>
+<p>Unfortunately, for Fedora Linux, there is no maintained package
+with <strong>GDB</strong> for <strong>AVR</strong> architectures anymore, therefore we need to
+build it by ourselves. Luckily it&rsquo;s very simple.</p>
+<p>Download the latest <strong>GDB</strong> <a href="https://www.sourceware.org/gdb/download/">sources</a>,
+compile it for target <strong>AVR</strong> architecture and install it in the defined
+directory like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./configure --target<span style="color:#f92672">=</span>avr --prefix<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>HOME<span style="color:#e6db74">}</span>/Programs/avr-gdb
+</span></span><span style="display:flex;"><span>make
+</span></span><span style="display:flex;"><span>make install
+</span></span></code></pre></div><p>Then unpack the <strong>avr_debug</strong> library into the Arduino user libraries
+directory at <code>${HOME}/Arduino/libraries/avr-debugger</code>. Put there just the
+library <a href="https://github.com/jdolinay/avr_debug/tree/master/arduino/library/avr-debugger">sub-directory</a>
+from the default branch.</p>
+<h3 id="configure-the-project">Configure the project</h3>
+<p>Include the debugging library into our project by going to the
+<strong>Arduino: Library Manager</strong>, filtering the <code>avr-debugger</code> and
+clicking the <strong>Include Library</strong> button.</p>
+<p>Now we have the sources prepared for adding the debugging support
+which is as simple as adding the <code>debug_init()</code> function at the
+beginning of the <code>setup()</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;app_api.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;avr_debugger.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;avr8-stub.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">debug_init</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pinMode</span>(LED_BUILTIN, OUTPUT);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loop</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">digitalWrite</span>(LED_BUILTIN, HIGH);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">delay</span>(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">digitalWrite</span>(LED_BUILTIN, LOW);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">delay</span>(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Last thing we need to do is to create a debugging configuration
+for VS Code, so it knows what we want to debug and how.</p>
+<p>I am sharing my <code>launch.json</code> example below. The key parts there:</p>
+<ul>
+<li><code>program</code> points to our built program which is the <code>.elf</code> binary in the <code>build</code> folder</li>
+<li><code>miDebuggerPath</code> addresses the <strong>AVR GDB</strong> binary we have built</li>
+<li><code>setupCommands</code> section tells <strong>GDB</strong> what port and baud rate to use</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;version&#34;</span>: <span style="color:#e6db74">&#34;0.2.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;configurations&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;Debugger launch&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;cppdbg&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;request&#34;</span>: <span style="color:#e6db74">&#34;launch&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;program&#34;</span>: <span style="color:#e6db74">&#34;${workspaceFolder}/build/example.ino.elf&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;cwd&#34;</span>: <span style="color:#e6db74">&#34;${workspaceFolder}&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;externalConsole&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;MIMode&#34;</span>: <span style="color:#e6db74">&#34;gdb&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;miDebuggerPath&#34;</span>: <span style="color:#e6db74">&#34;${userHome}/Programs/avr-gdb/bin/avr-gdb&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;setupCommands&#34;</span>: [
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Set remote serial baud&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;text&#34;</span>: <span style="color:#e6db74">&#34;set serial baud 115200&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;ignoreFailures&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;description&#34;</span>: <span style="color:#e6db74">&#34;Attach to serial port&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;text&#34;</span>: <span style="color:#e6db74">&#34;target remote /dev/ttyUSB0&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;ignoreFailures&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>You can put it in the <code>.vscode</code> subfolder and modify it according to
+your environment.</p>
+<h3 id="lets-add-some-breakpoints">Let&rsquo;s add some breakpoints!</h3>
+<p>And so now we can verify and upload our program and then debug
+the running program in VS Code as with any other project. Just
+setup the breakpoints and then attach to the board using the
+<strong>Run and Debug</strong> from the Activity Bar.</p>
+<p><strong>Note:</strong> there is one important downside of this approach and
+it&rsquo;s that no <code>Serial</code> functions could be used when the debugging stub
+is attached. You could use the conditional compilation to
+enable them when not debugging. For more info, refer to the
+upstream project of the <strong>avr_debug</strong> author.</p>
+<hr>
+]]></content:encoded></item></channel></rss>
