@@ -9,26 +9,6 @@ ShowReadingTime: true
 ShowPostNavLinks: true
 ---
 
-<!-- Debugging AT MEGA 2560 on Linux
--------------------------------
-1. VS Code + arduino-cli + Arduino extension
-2. Arduino library manager - install AVR boards library
-3. In arduino.json - add "output": "build"
-3. Compile + verify a simple program
-4. Add the user to 'tty' or 'dialout' groups & restart
-5. Connect Arduino through USB
-6. Select /dev/ttyUSB0 and upload the program
-7. Download gdb sources (e.g. 12.1)
-8. Compile it for AVR architecture = ./configure --target=avr --prefix=${HOME}/Programs/avr-gdb; make; make install
-7. Download avr-debugger, place it to user libraries - e.g. /home/jkolarik/Arduino/libraries/avr-debugger
-8. Include the avr-debugger to project - use Arduino library manager, select avr-debugger, include
-9. Add debug_init(); into the setup function
-10. Configure launch.json file for debugging purposes - point program var to the elf file in build dir; setup avr-gdb path, remote serial baud param and target remote to /dev/ttyUSB0
-11. Verify & upload the new program with debug stub
-12. Debug through VS Code!
-
-NOTE: No Serial.* functions could be used with debugging stub attached. If you need them, use f.e. conditional compilation = enable Serial when not debugging, otherwise disable. -->
-
 ![arduino-logo](/posts/images/arduino-logo.png "Arduino logo")
 
 ## Intro
