@@ -1,4 +1,115 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>dnf on kolage</title><link>https://jan-kolarik.github.io/tags/dnf/</link><description>Recent content in dnf on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 09 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/dnf/index.xml" rel="self" type="application/rss+xml"/><item><title>DNF5 at FOSDEM</title><link>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</link><pubDate>Thu, 09 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</guid><description>Presenting the upcoming Fedora Linux package manager in Brussels</description><content:encoded><![CDATA[<p><img loading="lazy" src="/posts/images/fosdem-logo.png" alt="fosdem-logo"  title="FOSDEM logo"  />
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>dnf on kolage</title><link>https://jan-kolarik.github.io/tags/dnf/</link><description>Recent content in dnf on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 17 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/dnf/index.xml" rel="self" type="application/rss+xml"/><item><title>Using DNF5 API after running the transaction</title><link>https://jan-kolarik.github.io/posts/dnf5-api-after-transaction/</link><pubDate>Mon, 17 Apr 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-api-after-transaction/</guid><description>What happens to the existing sack and how to deal with that</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
+<p>A common use case for DNF5 API is installing packages, which is quite
+straightfoward.</p>
+<p>First, we need to create a <code>Base</code>, the core object that holds a runtime
+environment. We load its configuration from the system and run the <code>setup</code>
+method to prepare the environment.</p>
+<p>Next, we can prepare a repository sack, which holds information about
+configured repositories and the state of local and remote packages, while
+potentially refreshing metadata from remote servers if needed.</p>
+<p>With the setup complete, we can tell DNF5 what we want to do, in this case,
+install our package. This is done by configuring the <code>Goal</code> object.</p>
+<p>After defining our intention, we can proceed to calculate the transaction,
+determining the necessary actions to achieve our goal. Finally, we can perform
+the resulting action, which is downloading and installing the packages.</p>
+<p>An example Python script that accomplishes this might look like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> libdnf5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>base <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Base()
+</span></span><span style="display:flex;"><span>base<span style="color:#f92672">.</span>load_config_from_file()
+</span></span><span style="display:flex;"><span>base<span style="color:#f92672">.</span>setup()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sack <span style="color:#f92672">=</span> base<span style="color:#f92672">.</span>get_repo_sack()
+</span></span><span style="display:flex;"><span>sack<span style="color:#f92672">.</span>create_repos_from_system_configuration()
+</span></span><span style="display:flex;"><span>sack<span style="color:#f92672">.</span>update_and_load_enabled_repos(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>goal <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Goal(base)
+</span></span><span style="display:flex;"><span>goal<span style="color:#f92672">.</span>add_install(<span style="color:#e6db74">&#39;my-awesome-package&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>transaction <span style="color:#f92672">=</span> goal<span style="color:#f92672">.</span>resolve()
+</span></span><span style="display:flex;"><span>transaction<span style="color:#f92672">.</span>download()
+</span></span><span style="display:flex;"><span>transaction<span style="color:#f92672">.</span>run()
+</span></span></code></pre></div><p>After this point, if everything went well, the package should be successfully installed
+on the system.</p>
+<p>What could be tricky is when trying to use the API after the transaction. The problem is that
+the existing repository sack does not reflect the updated state after the transaction was
+executed. This is because managing that state with connected third-party libraries would be
+very difficult.</p>
+<hr>
+<h2 id="use-information-from-the-transaction-object">Use information from the Transaction object</h2>
+<p>If you only need to query information about the post-transaction state, you can use the data
+provided by the <code>Transaction</code> object.</p>
+<p>The <code>get_transaction_packages()</code> method can be particularly useful for this purpose. It allows
+us to query which packages were involved in the transaction, the specific actions taken with
+these packages, and any packages they may have been replaced with.</p>
+<p>For example, let&rsquo;s say we want to retrieve a list of new files that were installed during the
+transaction. In this case, we&rsquo;ll need to pre-load the filelists metadata in DNF5 before loading
+the repository sack. We can do this by adding the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>base<span style="color:#f92672">.</span>get_config()<span style="color:#f92672">.</span>get_optional_metadata_types_option()<span style="color:#f92672">.</span>add_item(<span style="color:#e6db74">&#39;filelists&#39;</span>)
+</span></span></code></pre></div><p>Then, you can use the helper function <code>transaction_item_action_is_inbound</code> to filter only
+inbound packages from the transaction. Finally, you can query the package files contained
+in the transaction:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>newly_installed_files <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> transaction_package <span style="color:#f92672">in</span> transaction<span style="color:#f92672">.</span>get_transaction_packages():
+</span></span><span style="display:flex;"><span>    action <span style="color:#f92672">=</span> transaction_package<span style="color:#f92672">.</span>get_action()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>transaction<span style="color:#f92672">.</span>transaction_item_action_is_inbound(action):
+</span></span><span style="display:flex;"><span>        package_files <span style="color:#f92672">=</span> transaction_package<span style="color:#f92672">.</span>get_package()<span style="color:#f92672">.</span>get_files()
+</span></span><span style="display:flex;"><span>        newly_installed_files <span style="color:#f92672">|=</span> set(package_files)
+</span></span></code></pre></div><hr>
+<h2 id="use-the-rpm-api">Use the RPM API</h2>
+<p>Another alternative is to use the underlying RPM API. This should be the most
+effective way for querying information about installed packages, as we are directly
+reading the data from the SQLite database:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> rpm
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Prepare the transaction set while ignoring package signatures verification</span>
+</span></span><span style="display:flex;"><span>transaction_set <span style="color:#f92672">=</span> rpm<span style="color:#f92672">.</span>TransactionSet()
+</span></span><span style="display:flex;"><span>transaction_set<span style="color:#f92672">.</span>setVSFlags(rpm<span style="color:#f92672">.</span>_RPMVSF_NOSIGNATURES)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Find the newest package in the database</span>
+</span></span><span style="display:flex;"><span>last_package <span style="color:#f92672">=</span> max(transaction_set<span style="color:#f92672">.</span>dbMatch(), 
+</span></span><span style="display:flex;"><span>                   key<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> package: package[rpm<span style="color:#f92672">.</span>RPMTAG_INSTALLTIME])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Get packages only related to the latest transaction</span>
+</span></span><span style="display:flex;"><span>last_packages <span style="color:#f92672">=</span> transaction_set<span style="color:#f92672">.</span>dbMatch(rpm<span style="color:#f92672">.</span>RPMTAG_INSTALLTID, 
+</span></span><span style="display:flex;"><span>                                        last_package[rpm<span style="color:#f92672">.</span>RPMTAG_INSTALLTID])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Aggregate all related files</span>
+</span></span><span style="display:flex;"><span>files <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> package <span style="color:#f92672">in</span> last_packages:
+</span></span><span style="display:flex;"><span>    files <span style="color:#f92672">|=</span> set(package[rpm<span style="color:#f92672">.</span>RPMTAG_FILENAMES])
+</span></span></code></pre></div><hr>
+<h2 id="start-with-the-new-base">Start with the new Base</h2>
+<p>When we want to perform multiple transactions in a row, the easiest way is probably to create
+a fresh new <code>Base</code> each time. If we would continue with the use case of installing packages,
+we can prepare a helper method in our script for this purpose:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> libdnf5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">install_package</span>(spec):
+</span></span><span style="display:flex;"><span>    base <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Base()
+</span></span><span style="display:flex;"><span>    base<span style="color:#f92672">.</span>load_config_from_file()
+</span></span><span style="display:flex;"><span>    base<span style="color:#f92672">.</span>setup()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    sack <span style="color:#f92672">=</span> base<span style="color:#f92672">.</span>get_repo_sack()
+</span></span><span style="display:flex;"><span>    sack<span style="color:#f92672">.</span>create_repos_from_system_configuration()
+</span></span><span style="display:flex;"><span>    sack<span style="color:#f92672">.</span>update_and_load_enabled_repos(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    goal <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Goal(base)
+</span></span><span style="display:flex;"><span>    goal<span style="color:#f92672">.</span>add_install(spec)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    transaction <span style="color:#f92672">=</span> goal<span style="color:#f92672">.</span>resolve()
+</span></span><span style="display:flex;"><span>    transaction<span style="color:#f92672">.</span>download()
+</span></span><span style="display:flex;"><span>    transaction<span style="color:#f92672">.</span>run()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> package <span style="color:#f92672">in</span> [<span style="color:#e6db74">&#39;my-awesome-package&#39;</span>, <span style="color:#e6db74">&#39;another-great-package&#39;</span>]:
+</span></span><span style="display:flex;"><span>    install_package(package)
+</span></span></code></pre></div><hr>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://github.com/rpm-software-management/dnf5">DNF5 upstream</a></li>
+<li><a href="https://github.com/rpm-software-management/rpm">RPM upstream</a></li>
+</ul>
+]]></content:encoded></item><item><title>DNF5 at FOSDEM</title><link>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</link><pubDate>Thu, 09 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</guid><description>Presenting the upcoming Fedora Linux package manager in Brussels</description><content:encoded><![CDATA[<p><img loading="lazy" src="/posts/images/fosdem-logo.png" alt="fosdem-logo"  title="FOSDEM logo"  />
 </p>
 <p>Last weekend I&rsquo;ve attended FOSDEM 2023 conference with my colleagues from the Red Hat RPM software management team. We gave a talk about the DNF5 package manager which will be the new default in Fedora Linux soon.</p>
 <p>It was the first time for me speaking in public at such a huge event and it was really exciting. This whole meetup was very energizing. Lot of different positive vibes from various tracks. I hope I&rsquo;ll make it there again next year.</p>
