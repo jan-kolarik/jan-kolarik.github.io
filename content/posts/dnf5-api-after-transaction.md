@@ -1,5 +1,5 @@
 ---
-title: "Using DNF5 API after running the transaction"
+title: "Using DNF5 API after running a transaction"
 date: "2023-04-17"
 summary: "What happens to the existing sack and how to deal with that"
 tags: ["dnf"]
