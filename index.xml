@@ -56,6 +56,44 @@ in the transaction:</p>
 </span></span><span style="display:flex;"><span>        package_files <span style="color:#f92672">=</span> transaction_package<span style="color:#f92672">.</span>get_package()<span style="color:#f92672">.</span>get_files()
 </span></span><span style="display:flex;"><span>        newly_installed_files <span style="color:#f92672">|=</span> set(package_files)
 </span></span></code></pre></div><hr>
+<h2 id="start-with-a-new-base">Start with a new Base</h2>
+<p>The easiest and most robust way is probably to create a new <code>Base</code> each time
+we need a fresh state. Although some work is done repeatedly, there is no
+additional unnecessary network trafic as the metadata is already refreshed
+during the first attempt. This approach allows us to perform any task as if
+we were executing a new separate script for each one.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> libdnf5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create_base</span>():
+</span></span><span style="display:flex;"><span>    base <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Base()
+</span></span><span style="display:flex;"><span>    base<span style="color:#f92672">.</span>load_config_from_file()
+</span></span><span style="display:flex;"><span>    base<span style="color:#f92672">.</span>setup()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    sack <span style="color:#f92672">=</span> base<span style="color:#f92672">.</span>get_repo_sack()
+</span></span><span style="display:flex;"><span>    sack<span style="color:#f92672">.</span>create_repos_from_system_configuration()
+</span></span><span style="display:flex;"><span>    sack<span style="color:#f92672">.</span>update_and_load_enabled_repos(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> base
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">install_package</span>(spec):
+</span></span><span style="display:flex;"><span>    base <span style="color:#f92672">=</span> create_base()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    goal <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Goal(base)
+</span></span><span style="display:flex;"><span>    goal<span style="color:#f92672">.</span>add_install(spec)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    transaction <span style="color:#f92672">=</span> goal<span style="color:#f92672">.</span>resolve()
+</span></span><span style="display:flex;"><span>    transaction<span style="color:#f92672">.</span>download()
+</span></span><span style="display:flex;"><span>    transaction<span style="color:#f92672">.</span>run()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">query_installed</span>():
+</span></span><span style="display:flex;"><span>    base <span style="color:#f92672">=</span> create_base()
+</span></span><span style="display:flex;"><span>    query <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>rpm<span style="color:#f92672">.</span>PackageQuery(base)
+</span></span><span style="display:flex;"><span>    query<span style="color:#f92672">.</span>filter_installed()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [package<span style="color:#f92672">.</span>get_nevra() <span style="color:#66d9ef">for</span> package <span style="color:#f92672">in</span> query]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>install_package(<span style="color:#e6db74">&#39;my-awesome-package&#39;</span>)
+</span></span><span style="display:flex;"><span>print(query_installed())
+</span></span></code></pre></div><hr>
 <h2 id="use-the-rpm-api">Use the RPM API</h2>
 <p>Another alternative is to use the underlying RPM API. This should be the most
 effective way for querying information about installed packages, as we are directly
@@ -78,31 +116,6 @@ reading the data from the SQLite database:</p>
 </span></span><span style="display:flex;"><span>files <span style="color:#f92672">=</span> set()
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> package <span style="color:#f92672">in</span> last_packages:
 </span></span><span style="display:flex;"><span>    files <span style="color:#f92672">|=</span> set(package[rpm<span style="color:#f92672">.</span>RPMTAG_FILENAMES])
-</span></span></code></pre></div><hr>
-<h2 id="start-with-the-new-base">Start with the new Base</h2>
-<p>When we want to perform multiple transactions in a row, the easiest way is probably to create
-a fresh new <code>Base</code> each time. If we would continue with the use case of installing packages,
-we can prepare a helper method in our script for this purpose:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> libdnf5
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">install_package</span>(spec):
-</span></span><span style="display:flex;"><span>    base <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Base()
-</span></span><span style="display:flex;"><span>    base<span style="color:#f92672">.</span>load_config_from_file()
-</span></span><span style="display:flex;"><span>    base<span style="color:#f92672">.</span>setup()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    sack <span style="color:#f92672">=</span> base<span style="color:#f92672">.</span>get_repo_sack()
-</span></span><span style="display:flex;"><span>    sack<span style="color:#f92672">.</span>create_repos_from_system_configuration()
-</span></span><span style="display:flex;"><span>    sack<span style="color:#f92672">.</span>update_and_load_enabled_repos(<span style="color:#66d9ef">True</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    goal <span style="color:#f92672">=</span> libdnf5<span style="color:#f92672">.</span>base<span style="color:#f92672">.</span>Goal(base)
-</span></span><span style="display:flex;"><span>    goal<span style="color:#f92672">.</span>add_install(spec)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    transaction <span style="color:#f92672">=</span> goal<span style="color:#f92672">.</span>resolve()
-</span></span><span style="display:flex;"><span>    transaction<span style="color:#f92672">.</span>download()
-</span></span><span style="display:flex;"><span>    transaction<span style="color:#f92672">.</span>run()
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> package <span style="color:#f92672">in</span> [<span style="color:#e6db74">&#39;my-awesome-package&#39;</span>, <span style="color:#e6db74">&#39;another-great-package&#39;</span>]:
-</span></span><span style="display:flex;"><span>    install_package(package)
 </span></span></code></pre></div><hr>
 <h2 id="references">References</h2>
 <ul>
