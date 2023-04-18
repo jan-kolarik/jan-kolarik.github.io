@@ -92,6 +92,50 @@ for transaction_package in transaction.get_transaction_packages():
 
 ---
 
+## Start with a new Base
+
+The easiest and most robust way is probably to create a new `Base` each time
+we need a fresh state. Although some work is done repeatedly, there is no
+additional unnecessary network trafic as the metadata is already refreshed 
+during the first attempt. This approach allows us to perform any task as if 
+we were executing a new separate script for each one.
+
+```python
+import libdnf5
+
+def create_base():
+    base = libdnf5.base.Base()
+    base.load_config_from_file()
+    base.setup()
+
+    sack = base.get_repo_sack()
+    sack.create_repos_from_system_configuration()
+    sack.update_and_load_enabled_repos(True)
+
+    return base
+
+def install_package(spec):
+    base = create_base()
+
+    goal = libdnf5.base.Goal(base)
+    goal.add_install(spec)
+
+    transaction = goal.resolve()
+    transaction.download()
+    transaction.run()
+
+def query_installed():
+    base = create_base()
+    query = libdnf5.rpm.PackageQuery(base)
+    query.filter_installed()
+    return [package.get_nevra() for package in query]
+
+install_package('my-awesome-package')
+print(query_installed())
+```
+
+---
+
 ## Use the RPM API
 
 Another alternative is to use the underlying RPM API. This should be the most
@@ -118,37 +162,6 @@ files = set()
 for package in last_packages:
     files |= set(package[rpm.RPMTAG_FILENAMES])
 
-```
-
----
-
-## Start with the new Base
-
-When we want to perform multiple transactions in a row, the easiest way is probably to create
-a fresh new `Base` each time. If we would continue with the use case of installing packages, 
-we can prepare a helper method in our script for this purpose:
-
-```python
-import libdnf5
-
-def install_package(spec):
-    base = libdnf5.base.Base()
-    base.load_config_from_file()
-    base.setup()
-
-    sack = base.get_repo_sack()
-    sack.create_repos_from_system_configuration()
-    sack.update_and_load_enabled_repos(True)
-
-    goal = libdnf5.base.Goal(base)
-    goal.add_install(spec)
-
-    transaction = goal.resolve()
-    transaction.download()
-    transaction.run()
-
-for package in ['my-awesome-package', 'another-great-package']:
-    install_package(package)
 ```
 
 ---
