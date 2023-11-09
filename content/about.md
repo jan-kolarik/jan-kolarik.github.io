@@ -6,7 +6,7 @@ disableShare: true
 hideMeta: true
 ---
 
-My name is Jan Kolárik and I'm a software engineer currently working in Red Hat.
+My name is Jan Kolárik and I'm a software engineer currently working in Software Management team on stuff related to DNF package manager in Red Hat.
 
 I first discovered Linux when I was 14 years old and a few years later I started using it as my main operating system.
 
