@@ -1,4 +1,128 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>dnf on kolage</title><link>https://jan-kolarik.github.io/tags/dnf/</link><description>Recent content in dnf on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 17 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/dnf/index.xml" rel="self" type="application/rss+xml"/><item><title>Using DNF5 API after running a transaction</title><link>https://jan-kolarik.github.io/posts/dnf5-api-after-transaction/</link><pubDate>Mon, 17 Apr 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-api-after-transaction/</guid><description>What happens to the existing sack and how to deal with that</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Dnf on kolage</title><link>https://jan-kolarik.github.io/tags/dnf/</link><description>Recent content in Dnf on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 22 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/dnf/index.xml" rel="self" type="application/rss+xml"/><item><title>Maintaining C++ ABI compatibility</title><link>https://jan-kolarik.github.io/posts/abi-compatibility/</link><pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/abi-compatibility/</guid><description>Update the codebase safely to not break your consumers</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
+<p>In this post, I&rsquo;d like to share some insights on the crucial topic of
+maintaining ABI compatibility with programs written in C++, especially
+when your component serves as a dependency in a software ecosystem.
+I&rsquo;ll try to provide some tips and insights into our approach within
+the DNF5 project and explore specific tools for analyzing issues
+related to ABI changes.</p>
+<hr>
+<h2 id="understanding-abi-compatibility">Understanding ABI compatibility</h2>
+<p>In simple terms, the Application Binary Interface (ABI) is a contract
+between different parts of a software system which ensures they can
+work together seamlessly, regardless of the programming languages or
+compilers used to create them.</p>
+<p>When we mention maintaining ABI compatibility, our goal is to ensure
+that clients of our library do not need to recompile their applications
+when downloading and deploying a new version. They should be able to
+continue running their application builds without making any changes
+themselves.</p>
+<h3 id="abi-vs-api">ABI vs API</h3>
+<p>It&rsquo;s also important to distinguish between ABI compatibility and
+API compatibility.</p>
+<p>API compatibility focuses on preserving the functionality and syntax
+of the exposed interfaces. In other words, ABI compatibility ensures
+that the compiled code can work interchangeably, while API compatibility
+guarantees that the expected methods, parameters, and behaviors remain
+consistent across different versions of the library.</p>
+<p>Both aspects are crucial for a smooth and easy integration of new library
+versions into existing applications.</p>
+<hr>
+<h2 id="how-to-not-break-anything">How to not break anything</h2>
+<p>To ensure ABI compatibility, developers should adhere to best practices,
+which include avoiding changes to the layout of classes, the size of
+data types, and the order of virtual functions in interfaces.</p>
+<p>The KDE community has compiled <a href="https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C%2B%2B">a comprehensive guide</a> on binary compatibility
+issues with C++ that you might find helpful. The guide provides a list of
+do’s and don’ts when writing cross-platform C++ code meant to be compiled
+with several different compilers.</p>
+<p>While breaking ABI compatibility is generally undesirable, there are situations
+where it becomes necessary. This may be due to the need to address critical
+security vulnerabilities, eliminate long-deprecated features that impede
+development progress, or undertake significant refactoring to introduce major
+enhancements that require incompatible changes in the library.</p>
+<hr>
+<h2 id="our-approach-to-abi-compatibility-in-dnf5">Our approach to ABI compatibility in DNF5</h2>
+<h3 id="pimpl">Pimpl</h3>
+<p>In DNF5, we commonly face a scenario during development where adding new items
+to existing structures or classes, part of the external interface, can
+potentially break ABI compatibility. To mitigate this, we proactively identify
+candidates that might be affected in the future and convert them to use
+the <a href="https://en.cppreference.com/w/cpp/language/pimpl">Pimpl idiom</a>.</p>
+<p>The Pimpl idiom involves hiding the implementation details of a class
+behind a pointer, using a forward declaration in the header file, and keeping
+the implementation details in a separate source file. The public interface
+exposed in the header file remains stable since it only contains a forward
+declaration of the implementation class, ensuring that changes to internal
+implementation details won&rsquo;t affect the ABI as seen by external code.</p>
+<h3 id="branching">Branching</h3>
+<p>Additionally, when anticipating an ABI-breaking change, we create a separate
+development branch for introducing the next major version release. Here, we
+consolidate all planned breaking changes, conduct thorough testing,
+and introduce the changes in a single release. This approach not only minimizes
+disruption for users but also allows more efficient testing of the entire set
+of changes and enables clear communication with users about planned modifications.</p>
+<h3 id="bumping-soname">Bumping soname</h3>
+<p>Ensuring seamless transitions during changes that break the ABI, we practice
+soname library bumps. This involves incrementing the version number associated
+with our shared libraries on Linux systems. By doing so, we signal to users
+and applications that a backward-incompatible change has occurred. This soname
+bump not only aligns with semantic versioning principles but also helps with
+symbol versioning and dependency management.</p>
+<hr>
+<h2 id="what-about-some-tools">What about some tools</h2>
+<p>Of course, there are a lot of tools for static analysis that can compare the new
+and existing binaries and check for backward API/ABI compatibility.</p>
+<p>Keep in mind that any tool may produce false positives, so a manual review
+of the outputs is still required.</p>
+<h3 id="abi-compliance-checker">ABI Compliance Checker</h3>
+<p>One well-known tool for this purpose is the <a href="https://lvc.github.io/abi-compliance-checker">ABI Compliance Checker</a>, capable
+of generating clear XML or HTML outputs:</p>
+<p><img loading="lazy" src="/posts/images/abi-compliance-checker-example.jpg" alt="abi-compliance-checker-example"  title="ABI Compliance Checker - Example output"  />
+</p>
+<p>For a quick guide on using the commands, refer to <a href="https://fedoraproject.org/wiki/How_to_check_for_ABI_changes_with_abi_compliance_checker">this resource</a>.</p>
+<h3 id="abidiff">abidiff</h3>
+<p>Another commonly used tool is <a href="https://sourceware.org/libabigail/manual/abidiff.html">abidiff</a>, a command-line utility that compares
+the ABI of two ELF shared libraries. It generates textual reports detailing changes
+affecting exported functions, variables, and their types.</p>
+<p>It can be easily deployed as a GitHub action to check ABI compatibility with new
+changes in submitted pull requests. For example, you can review the <a href="https://github.com/managarm/mlibc">mlibc</a>
+project, which has the configuration for such a workflow <a href="https://github.com/managarm/mlibc/blob/master/.github/workflows/abidiff.yml">here</a>.</p>
+<hr>
+<h2 id="exploring-fedora-linux">Exploring Fedora Linux</h2>
+<p>Here are some specific insights related to the Fedora Linux and its RPM packages
+ecosystem.</p>
+<h3 id="rpminspect">rpminspect</h3>
+<p>When a package maintainer submits a new build or update through the <a href="https://bodhi.fedoraproject.org/">Bodhi</a> system,
+automated test suites evaluate the build candidate. Some tests are mandatory,
+preventing the package submission if they fail, while others are optional, requiring
+user verification for potential issues:</p>
+<p><img loading="lazy" src="/posts/images/bodhi-tests-results.png" alt="bodhi-tests-results"  title="Bodhi Automated Tests"  />
+</p>
+<p>One such tool in these automated tests is <a href="https://github.com/rpminspect/rpminspect">rpminspect</a>, contributing to general
+analysis of RPM packages. It produces a comprehensive report on policy compliance,
+changes between the previous and current build, and overall correctness and best
+practices. Abidiff is utilized there as one of the available analysis modes:</p>
+<p><img loading="lazy" src="/posts/images/tmt-rpm-inspect-output.png" alt="rpm-inspect-report"  title="rpminspect report"  />
+</p>
+<h3 id="packit-and-testing-farm">Packit and Testing Farm</h3>
+<p>The <a href="https://packit.dev/">Packit</a> project, designed to automate the package release process, has recently
+gained significant popularity. Maintainers can effortlessly create configurations
+based on a wide range of available examples. Packit automation streamlines the entire
+release process, from triggering builds and manipulating package spec files to generating
+changelogs and running tests.</p>
+<p>In the context of checking ABI changes, there&rsquo;s a simple <a href="https://packit.dev/docs/configuration/upstream/tests#rpminspect">way</a> to configure a GitHub
+action in your upstream project, enabling the triggering of rpminspect analysis on pull
+requests. This functionality is managed by the <a href="https://docs.testing-farm.io/Testing%20Farm/0.1/index.html">Testing Farm</a>, Packit&rsquo;s testing system,
+which is an integral part of the Fedora CI infrastructure.</p>
+<hr>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C%2B%2B">KDE Guide to Binary Compatibility</a></li>
+<li><a href="https://lvc.github.io/abi-compliance-checker">ABI Compliance Checker</a></li>
+<li><a href="https://sourceware.org/libabigail/manual/abidiff.html">abidiff</a></li>
+<li><a href="https://github.com/rpminspect/rpminspect">rpminspect</a></li>
+</ul>
+]]></content:encoded></item><item><title>Using DNF5 API after running a transaction</title><link>https://jan-kolarik.github.io/posts/dnf5-api-after-transaction/</link><pubDate>Mon, 17 Apr 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-api-after-transaction/</guid><description>What happens to the existing sack and how to deal with that</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
 <p>A common use case for DNF5 API is installing packages, which is quite
 straightfoward.</p>
 <p>First, we need to create a <code>Base</code>, the core object that holds a runtime
