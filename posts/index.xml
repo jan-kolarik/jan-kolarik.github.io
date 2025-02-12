@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Posts on kolage</title><link>https://jan-kolarik.github.io/posts/</link><description>Recent content in Posts on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 22 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Maintaining C++ ABI compatibility</title><link>https://jan-kolarik.github.io/posts/abi-compatibility/</link><pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/abi-compatibility/</guid><description>Update the codebase safely to not break your consumers</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Posts on kolage</title><link>https://jan-kolarik.github.io/posts/</link><description>Recent content in Posts on kolage</description><generator>Hugo -- 0.143.1</generator><language>en-us</language><lastBuildDate>Wed, 12 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>DNF manifest at FOSDEM</title><link>https://jan-kolarik.github.io/posts/dnf-manifest-fosdem2025/</link><pubDate>Wed, 12 Feb 2025 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf-manifest-fosdem2025/</guid><description>Expanding DNF into the container world at FOSDEM 2025</description><content:encoded><![CDATA[<p><img alt="fosdem-logo" loading="lazy" src="/posts/images/fosdem-logo.png" title="FOSDEM logo"></p>
+<p>Recently, I had the opportunity to present again at FOSDEM, a fantastic community conference focused on free and open-source software.</p>
+<p>This time, I spoke about our new project, the DNF Manifest plugin, which enables use cases for building container images in isolated environments - and potentially many others. The concept revolves around lock files, similar to those in NPM or Rust’s Cargo, preserving the state of RPM packages along with information on where to download the actual content.</p>
+<p>I hope my performance improved compared to last time. Personally, I felt more natural and at ease. A funny coincidence - just before I started preparing my talk, I came across a LinkedIn post with tips on presentation preparation. It turned out to be surprisingly helpful! I created a mind map to outline the core ideas I wanted to expand on and practiced using that instead of memorizing the speech. This approach made me feel much more confident.</p>
+<p>If you’re curious about how it went, check out the recording <a href="https://fosdem.org/2025/schedule/event/fosdem-2025-5354-dnf-manifest-a-new-way-to-replicate-your-package-configuration-debug-customer-issues-manage-container-files-and-more/">here</a>. You’ll also find many of other fascinating talks, all free to watch!</p>
+]]></content:encoded></item><item><title>Maintaining C++ ABI compatibility</title><link>https://jan-kolarik.github.io/posts/abi-compatibility/</link><pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/abi-compatibility/</guid><description>Update the codebase safely to not break your consumers</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
 <p>In this post, I&rsquo;d like to share some insights on the crucial topic of
 maintaining ABI compatibility with programs written in C++, especially
 when your component serves as a dependency in a software ecosystem.
@@ -77,8 +82,7 @@ of the outputs is still required.</p>
 <h3 id="abi-compliance-checker">ABI Compliance Checker</h3>
 <p>One well-known tool for this purpose is the <a href="https://lvc.github.io/abi-compliance-checker">ABI Compliance Checker</a>, capable
 of generating clear XML or HTML outputs:</p>
-<p><img loading="lazy" src="/posts/images/abi-compliance-checker-example.jpg" alt="abi-compliance-checker-example"  title="ABI Compliance Checker - Example output"  />
-</p>
+<p><img alt="abi-compliance-checker-example" loading="lazy" src="/posts/images/abi-compliance-checker-example.jpg" title="ABI Compliance Checker - Example output"></p>
 <p>For a quick guide on using the commands, refer to <a href="https://fedoraproject.org/wiki/How_to_check_for_ABI_changes_with_abi_compliance_checker">this resource</a>.</p>
 <h3 id="abidiff">abidiff</h3>
 <p>Another commonly used tool is <a href="https://sourceware.org/libabigail/manual/abidiff.html">abidiff</a>, a command-line utility that compares
@@ -96,14 +100,12 @@ ecosystem.</p>
 automated test suites evaluate the build candidate. Some tests are mandatory,
 preventing the package submission if they fail, while others are optional, requiring
 user verification for potential issues:</p>
-<p><img loading="lazy" src="/posts/images/bodhi-tests-results.png" alt="bodhi-tests-results"  title="Bodhi Automated Tests"  />
-</p>
+<p><img alt="bodhi-tests-results" loading="lazy" src="/posts/images/bodhi-tests-results.png" title="Bodhi Automated Tests"></p>
 <p>One such tool in these automated tests is <a href="https://github.com/rpminspect/rpminspect">rpminspect</a>, contributing to general
 analysis of RPM packages. It produces a comprehensive report on policy compliance,
 changes between the previous and current build, and overall correctness and best
 practices. Abidiff is utilized there as one of the available analysis modes:</p>
-<p><img loading="lazy" src="/posts/images/tmt-rpm-inspect-output.png" alt="rpm-inspect-report"  title="rpminspect report"  />
-</p>
+<p><img alt="rpm-inspect-report" loading="lazy" src="/posts/images/tmt-rpm-inspect-output.png" title="rpminspect report"></p>
 <h3 id="packit-and-testing-farm">Packit and Testing Farm</h3>
 <p>The <a href="https://packit.dev/">Packit</a> project, designed to automate the package release process, has recently
 gained significant popularity. Maintainers can effortlessly create configurations
@@ -248,8 +250,7 @@ reading the data from the SQLite database:</p>
 <li><a href="https://github.com/rpm-software-management/dnf5">DNF5 upstream</a></li>
 <li><a href="https://github.com/rpm-software-management/rpm">RPM upstream</a></li>
 </ul>
-]]></content:encoded></item><item><title>Debugging Arduino without additional hardware</title><link>https://jan-kolarik.github.io/posts/atmega-debug-linux/</link><pubDate>Thu, 16 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/atmega-debug-linux/</guid><description>Using Visual Studio Code to debug programs for Arduino Mega 2560</description><content:encoded><![CDATA[<p><img loading="lazy" src="/posts/images/arduino-logo.png" alt="arduino-logo"  title="Arduino logo"  />
-</p>
+]]></content:encoded></item><item><title>Debugging Arduino without additional hardware</title><link>https://jan-kolarik.github.io/posts/atmega-debug-linux/</link><pubDate>Thu, 16 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/atmega-debug-linux/</guid><description>Using Visual Studio Code to debug programs for Arduino Mega 2560</description><content:encoded><![CDATA[<p><img alt="arduino-logo" loading="lazy" src="/posts/images/arduino-logo.png" title="Arduino logo"></p>
 <h2 id="intro">Intro</h2>
 <p>On a bit different note, recently I was trying to help my father with adding
 debugging support for Arduino Mega 2560 microcontroller board without need
@@ -595,8 +596,7 @@ our DNF5 talk we had at FOSDEM last week:</p>
 <li><a href="https://jan-kolarik.github.io/dnf5-fosdem">Slides</a></li>
 <li><a href="https://video.fosdem.org/2023/K.1.105%20%28La%20Fontaine%29/dnf5.webm">Recording</a></li>
 </ul>
-]]></content:encoded></item><item><title>DNF5 at FOSDEM</title><link>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</link><pubDate>Thu, 09 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</guid><description>Presenting the upcoming Fedora Linux package manager in Brussels</description><content:encoded><![CDATA[<p><img loading="lazy" src="/posts/images/fosdem-logo.png" alt="fosdem-logo"  title="FOSDEM logo"  />
-</p>
+]]></content:encoded></item><item><title>DNF5 at FOSDEM</title><link>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</link><pubDate>Thu, 09 Feb 2023 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/dnf5-fosdem2023/</guid><description>Presenting the upcoming Fedora Linux package manager in Brussels</description><content:encoded><![CDATA[<p><img alt="fosdem-logo" loading="lazy" src="/posts/images/fosdem-logo.png" title="FOSDEM logo"></p>
 <p>Last weekend I&rsquo;ve attended FOSDEM 2023 conference with my colleagues from the Red Hat RPM software management team. We gave a talk about the DNF5 package manager which will be the new default in Fedora Linux soon.</p>
 <p>It was the first time for me speaking in public at such a huge event and it was really exciting. This whole meetup was very energizing. Lot of different positive vibes from various tracks. I hope I&rsquo;ll make it there again next year.</p>
 <p>If you are more interested, you can visit <a href="https://fosdem.org/2023/schedule/event/dnf5/">this</a> link and see a recording of our presentation or any other talk from the conference.</p>

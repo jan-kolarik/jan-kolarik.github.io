@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Fedora on kolage</title><link>https://jan-kolarik.github.io/tags/fedora/</link><description>Recent content in Fedora on kolage</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 22 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/fedora/index.xml" rel="self" type="application/rss+xml"/><item><title>Maintaining C++ ABI compatibility</title><link>https://jan-kolarik.github.io/posts/abi-compatibility/</link><pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/abi-compatibility/</guid><description>Update the codebase safely to not break your consumers</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Fedora on kolage</title><link>https://jan-kolarik.github.io/tags/fedora/</link><description>Recent content in Fedora on kolage</description><generator>Hugo -- 0.143.1</generator><language>en-us</language><lastBuildDate>Thu, 22 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://jan-kolarik.github.io/tags/fedora/index.xml" rel="self" type="application/rss+xml"/><item><title>Maintaining C++ ABI compatibility</title><link>https://jan-kolarik.github.io/posts/abi-compatibility/</link><pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate><guid>https://jan-kolarik.github.io/posts/abi-compatibility/</guid><description>Update the codebase safely to not break your consumers</description><content:encoded><![CDATA[<h2 id="intro">Intro</h2>
 <p>In this post, I&rsquo;d like to share some insights on the crucial topic of
 maintaining ABI compatibility with programs written in C++, especially
 when your component serves as a dependency in a software ecosystem.
@@ -77,8 +77,7 @@ of the outputs is still required.</p>
 <h3 id="abi-compliance-checker">ABI Compliance Checker</h3>
 <p>One well-known tool for this purpose is the <a href="https://lvc.github.io/abi-compliance-checker">ABI Compliance Checker</a>, capable
 of generating clear XML or HTML outputs:</p>
-<p><img loading="lazy" src="/posts/images/abi-compliance-checker-example.jpg" alt="abi-compliance-checker-example"  title="ABI Compliance Checker - Example output"  />
-</p>
+<p><img alt="abi-compliance-checker-example" loading="lazy" src="/posts/images/abi-compliance-checker-example.jpg" title="ABI Compliance Checker - Example output"></p>
 <p>For a quick guide on using the commands, refer to <a href="https://fedoraproject.org/wiki/How_to_check_for_ABI_changes_with_abi_compliance_checker">this resource</a>.</p>
 <h3 id="abidiff">abidiff</h3>
 <p>Another commonly used tool is <a href="https://sourceware.org/libabigail/manual/abidiff.html">abidiff</a>, a command-line utility that compares
@@ -96,14 +95,12 @@ ecosystem.</p>
 automated test suites evaluate the build candidate. Some tests are mandatory,
 preventing the package submission if they fail, while others are optional, requiring
 user verification for potential issues:</p>
-<p><img loading="lazy" src="/posts/images/bodhi-tests-results.png" alt="bodhi-tests-results"  title="Bodhi Automated Tests"  />
-</p>
+<p><img alt="bodhi-tests-results" loading="lazy" src="/posts/images/bodhi-tests-results.png" title="Bodhi Automated Tests"></p>
 <p>One such tool in these automated tests is <a href="https://github.com/rpminspect/rpminspect">rpminspect</a>, contributing to general
 analysis of RPM packages. It produces a comprehensive report on policy compliance,
 changes between the previous and current build, and overall correctness and best
 practices. Abidiff is utilized there as one of the available analysis modes:</p>
-<p><img loading="lazy" src="/posts/images/tmt-rpm-inspect-output.png" alt="rpm-inspect-report"  title="rpminspect report"  />
-</p>
+<p><img alt="rpm-inspect-report" loading="lazy" src="/posts/images/tmt-rpm-inspect-output.png" title="rpminspect report"></p>
 <h3 id="packit-and-testing-farm">Packit and Testing Farm</h3>
 <p>The <a href="https://packit.dev/">Packit</a> project, designed to automate the package release process, has recently
 gained significant popularity. Maintainers can effortlessly create configurations
